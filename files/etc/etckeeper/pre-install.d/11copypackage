@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Copy packagelist in order to track changes that do not modify /etc
+cp /var/cache/etckeeper/packagelist.pre-install /etc/etckeeper/packagelist

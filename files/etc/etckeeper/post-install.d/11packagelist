@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Make sure /etc/etckeeper/packagelist is changed
+etckeeper list-installed > /etc/etckeeper/packagelist

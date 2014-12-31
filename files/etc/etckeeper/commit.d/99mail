@@ -1,0 +1,33 @@
+#!/bin/sh
+
+# This is needed since neither MAIL_RECIPIENT nor MAIL_SENDER are exported
+# by etckeeper
+
+if [ -z "$ETCKEEPER_CONF_DIR" ]; then
+    ETCKEEPER_CONF_DIR=/etc/etckeeper
+fi
+conf="$ETCKEEPER_CONF_DIR/etckeeper.conf"
+if [ -e $conf ]; then
+    . $conf
+fi
+
+
+if [ -n "$MAIL_RECIPIENT" ] || [ -n "$MAIL_SENDER" ]; then
+    if [ -z "$MAIL_RECIPIENT" ] ; then
+	MAIL_RECIPIENT=$MAIL_SENDER
+    fi
+    if [ -z "$MAIL_SENDER" ] ; then
+	MAIL_SENDER=$MAIL_RECIPIENT
+    fi
+    if [ "$VCS" = git ] && [ -d .git ]; then
+	git format-patch --stdout --attach --subject-prefix="`hostname`" \
+	    --to=$MAIL_RECIPIENT HEAD@{1}..HEAD \
+	    --add-header "X-Git-Host: `hostname`" \
+	    --add-header "X-Git-FQDN: `hostname --fqdn`" \
+	    --add-header "X-Git-Type: etckeeper" | \
+	    sed "1d; 2s/^\(From: .\+\) <.*>/\1 on `hostname` <$MAIL_SENDER>/" | \
+	    /usr/sbin/sendmail -t || true
+    else
+	echo "PUSH_REMOTE not yet supported for $VCS" >&2
+    fi
+fi

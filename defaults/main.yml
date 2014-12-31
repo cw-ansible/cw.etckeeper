@@ -1,0 +1,6 @@
+---
+
+etckeeper_vcs: git
+etckeeper_vcs_pkg: git
+etckeeper_vcs_git_name: 'etckeeper'
+etckeeper_vcs_git_email: 'etckeeper@example.com'

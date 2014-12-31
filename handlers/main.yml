@@ -1,0 +1,22 @@
+---
+
+- name: etckeeper init
+  command: etckeeper init
+  notify: etckeeper init git email
+
+- name: etckeeper init git email
+  when: etckeeper_vcs == 'git'
+  command:
+    git config user.email "{{ etckeeper_vcs_git_email }}"
+    chdir=/etc
+  notify: etckeeper init git name
+
+- name: etckeeper init git name
+  when: etckeeper_vcs == 'git'
+  command:
+    git config user.name "{{ etckeeper_vcs_git_name }}"
+    chdir=/etc
+  notify: etckeeper commit
+
+- name: etckeeper commit
+  command: etckeeper commit initial commit

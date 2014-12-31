@@ -1,0 +1,41 @@
+---
+
+- name: Install etckeeper
+  apt: pkg="{{ item }}"
+  with_items:
+    - "{{ etckeeper_vcs_pkg }}"
+    - etckeeper
+
+- name: Configure etckeeper disable bzr
+  lineinfile:
+    dest=/etc/etckeeper/etckeeper.conf
+    regexp='^.*(VCS="bzr")'
+    line='#\1'
+    backrefs=yes
+
+- name: Configure etckeeper enable VCS
+  lineinfile:
+    dest=/etc/etckeeper/etckeeper.conf
+    regexp='^.*(VCS="{{ etckeeper_vcs }}")'
+    line='\1'
+    backrefs=yes
+  notify: etckeeper init
+
+- name: Custom hooks
+  copy:
+    src='{{ item }}'
+    dest='/{{ item }}'
+  with_items:
+    - etc/etckeeper/commit.d/99mail
+    - etc/etckeeper/pre-install.d/11copypackage
+    - etc/etckeeper/post-install.d/11packagelist
+    
+- name: Configure etckeeper email
+  lineinfile:
+    dest=/etc/etckeeper/etckeeper.conf
+    line='{{item}}={{ etckeeper_vcs_git_email }}'
+  with_items:
+    - MAIL_SENDER
+    - MAIL_RECIPIENT
+
+- meta: flush_handlers
