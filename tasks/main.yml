@@ -25,6 +25,7 @@
   copy:
     src='{{ item }}'
     dest='/{{ item }}'
+    mode='0755'
   with_items:
     - etc/etckeeper/commit.d/99mail
     - etc/etckeeper/pre-install.d/11copypackage
