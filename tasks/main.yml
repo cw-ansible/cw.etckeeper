@@ -34,6 +34,7 @@
 - name: Configure etckeeper email
   lineinfile:
     dest=/etc/etckeeper/etckeeper.conf
+    regexp='^\s*{{item}}=.*$'
     line='{{item}}={{ etckeeper_vcs_git_email }}'
   with_items:
     - MAIL_SENDER
